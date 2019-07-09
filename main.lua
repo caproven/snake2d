@@ -12,7 +12,6 @@ local player = nil
 
 gridDelta = 50
 
--- local lost = false
 local score = 1
 
 local fruit = nil
@@ -53,7 +52,10 @@ function love.update(dt)
         if table.maxn(player.trail) >= player.trailMax then
           table.remove(player.trail, 1)
         end
-        table.insert(player.trail, player.x .. ' ' .. player.y)
+        table.insert(player.trail, {
+          x = player.x,
+          y = player.y
+        })
       end
     end
     -- update player position
@@ -70,8 +72,7 @@ function love.update(dt)
   end
 
   -- detect collision with fruit
-  if math.abs(fruit.x - player.x) < gridDelta and
-      math.abs(fruit.y - player.y) < gridDelta then
+  if equalCoords(fruit.x, player.x, fruit.y, player.y) then
     player.trailMax = player.trailMax + 3
     score = player.trailMax
     randomizeFruitPos()
@@ -80,18 +81,13 @@ function love.update(dt)
   -- detect collision with window border
   if player.x < 0 or player.x + gridDelta > love.graphics.getWidth() or
       player.y < 0 or player.y + gridDelta > love.graphics.getHeight() then
-    -- lost = true
-    -- player.direction = DIR_NONE
     os.exit()
   end
   -- detect collision with trail
   local trailLen = table.maxn(player.trail)
   for i=1,trailLen,1 do
-    local x, y = string.match(player.trail[i], "(%d+) (%d+)")
-    if math.abs(x - player.x) < gridDelta and -- damn float precision
-        math.abs(y - player.y) < gridDelta then
-      -- lost = true
-      -- player.direction = DIR_NONE
+    local x, y = player.trail[i].x, player.trail[i].y
+    if equalCoords(x, player.x, y, player.y) then
       os.exit()
     end
   end
@@ -105,7 +101,7 @@ function love.draw()
   love.graphics.setColor(trailColor:getLove())
   local trailLen = table.maxn(player.trail)
   for i=1,trailLen do
-    x, y = string.match(player.trail[i], "(%d+) (%d+)")
+    x, y = player.trail[i].x, player.trail[i].y
     love.graphics.rectangle("fill", x, y, gridDelta, gridDelta)
   end
 
@@ -139,13 +135,13 @@ function randomizeFruitPos()
     newy = math.random(0, maxGridY) * gridDelta
     -- if there is a collision between new pos and trail or player, generate new pos
     for i=1,trailLen do
-      local x, y = string.match(player.trail[i], "(%d+) (%d+)")
-      if math.abs(newx - x) < gridDelta and math.abs(newy - y) < gridDelta then
+      local x, y = player.trail[i].x, player.trail[i].y
+      if equalCoords(x, newx, y, newy) then
         collideTrail = true
         break
       end
     end
-    if math.abs(newx - player.x) < gridDelta and math.abs(newy - player.y) < gridDelta then
+    if equalCoords(newx, player.x, newy, player.y) then
       collidePlayer = true
     end
   until not collideTrail and not collidePlayer
@@ -153,4 +149,8 @@ function randomizeFruitPos()
   fruit.x = newx
   fruit.y = newy
   print('updated fruit pos')
+end
+
+function equalCoords(x1, x2, y1, y2)
+  return x1 == x2 and y1 == y2
 end
