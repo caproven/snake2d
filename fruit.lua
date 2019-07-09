@@ -4,8 +4,8 @@ Fruit.__index = Fruit
 function Fruit:create()
   local self = setmetatable({}, Fruit)
 
-  self.x = 50
-  self.y = 50
+  self.x = gridDelta
+  self.y = gridDelta
 
   return self
 end

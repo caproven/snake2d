@@ -3,23 +3,31 @@ require 'player'
 require 'fruit'
 
 -- vars
-local bgColor = Color:create(255, 204, 204)
-local playerColor = Color:create(255, 102, 153)
-local trailColor = Color:create(255, 255, 255)
-local fruitColor = Color:create(204, 255, 153)
+local bgColor = nil
+local playerColor = nil
+local trailColor = nil
+local fruitColor = nil
 
-local player = Player:create()
+local player = nil
 
-local gridDelta = 50
+gridDelta = 50
 
 -- local lost = false
 local score = 1
 
-local fruit = Fruit:create()
+local fruit = nil
 
 -- initialize stuff
 function love.load()
   math.randomseed(os.time()) -- so that fruit pos is different each time
+
+  bgColor = Color:create(255, 204, 204)
+  playerColor = Color:create(255, 102, 153)
+  trailColor = Color:create(255, 255, 255)
+  fruitColor = Color:create(204, 255, 153)
+
+  player = Player:create()
+  fruit = Fruit:create()
 end
 
 -- update game state
