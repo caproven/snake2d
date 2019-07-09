@@ -13,7 +13,7 @@ local player = Player:create()
 local gridDelta = 50
 
 -- local lost = false
-local score = 0
+local score = 1
 
 local fruit = Fruit:create()
 
@@ -64,8 +64,8 @@ function love.update(dt)
   -- detect collision with fruit
   if math.abs(fruit.x - player.x) < gridDelta and
       math.abs(fruit.y - player.y) < gridDelta then
-    score = table.maxn(player.trail)
     player.trailMax = player.trailMax + 3
+    score = player.trailMax
     randomizeFruitPos()
   end
 
