@@ -84,10 +84,8 @@ function love.update(dt)
     os.exit()
   end
   -- detect collision with trail
-  local trailLen = table.maxn(player.trail)
-  for i=1,trailLen,1 do
-    local x, y = player.trail[i].x, player.trail[i].y
-    if equalCoords(x, player.x, y, player.y) then
+  for i, trailPos in ipairs(player.trail) do
+    if equalCoords(trailPos.x, player.x, trailPos.y, player.y) then
       os.exit()
     end
   end
@@ -99,10 +97,8 @@ function love.draw()
 
   -- draw trail
   love.graphics.setColor(trailColor:getLove())
-  local trailLen = table.maxn(player.trail)
-  for i=1,trailLen do
-    x, y = player.trail[i].x, player.trail[i].y
-    love.graphics.rectangle("fill", x, y, gridDelta, gridDelta)
+  for i, trailPos in ipairs(player.trail) do
+    love.graphics.rectangle("fill", trailPos.x, trailPos.y, gridDelta, gridDelta)
   end
 
   -- draw fruit
@@ -125,7 +121,6 @@ function randomizeFruitPos()
   local maxGridY = love.graphics.getHeight() / gridDelta - 1
 
   local newx, newy
-  local trailLen = table.maxn(player.trail)
 
   local collideTrail, collidePlayer
   repeat
@@ -134,9 +129,8 @@ function randomizeFruitPos()
     newx = math.random(0, maxGridX) * gridDelta
     newy = math.random(0, maxGridY) * gridDelta
     -- if there is a collision between new pos and trail or player, generate new pos
-    for i=1,trailLen do
-      local x, y = player.trail[i].x, player.trail[i].y
-      if equalCoords(x, newx, y, newy) then
+    for i, trailPos in ipairs(player.trail) do
+      if equalCoords(trailPos.x, newx, trailPos.y, newy) then
         collideTrail = true
         break
       end
@@ -144,7 +138,7 @@ function randomizeFruitPos()
     if equalCoords(newx, player.x, newy, player.y) then
       collidePlayer = true
     end
-  until not collideTrail and not collidePlayer
+  until not (collideTrail or collidePlayer)
 
   fruit.x = newx
   fruit.y = newy
