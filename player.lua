@@ -7,7 +7,7 @@ DIR_DOWN = 2
 DIR_LEFT = 3
 DIR_RIGHT = 4
 
-function Player:create()
+function Player.create()
   local self = setmetatable({}, Player)
 
   self.direction = DIR_NONE -- default: no movement until first arrow key pressed
